@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello Cocos2d-JS</title> 
+    <script type="text/javascript" src="cocos2d-js-v3.5-lite.js" charset="UTF-8"></script>
+</head>
+<body>   
+    <canvas id="gameCanvas" width="800" height="640"></canvas>
+    <script type="text/javascript">
+          window.onload = function(){
+              cc.game.onStart = function(){
+                  //load resources
+                  cc.LoaderScene.preload(["./res/test1.png"], function () {
+                      var MyScene = cc.Scene.extend({
+                          onEnter:function () {
+                              this._super();
+                              this.sprites = [];
+                              var size = cc.director.getWinSize();
+
+                              for (var i = 0; i < 3000; i++) {
+                                  var sprite = cc.Sprite.create("./res/test1.png");
+                                  sprite.setPosition(size.width / 2, size.height / 2);
+                                  sprite.dir = {
+                                      x : Math.random() * 20 - 10,
+                                      y : Math.random() * 20 - 10
+                                  };
+                                  this.sprites.push(sprite);
+                                  this.addChild(sprite, 0);
+                              }
+
+                              this._label = cc.LabelTTF.create("", "Arial", 10);
+                              this._label.setPosition(50, size.height-20);
+                              this._label.setColor(cc.color(255,255,255,255));
+                              this.addChild(this._label, 1);
+
+                              this.scheduleUpdate();
+                          },
+                          update:function () {
+                              sprites = this.sprites;
+                              for (var i = 0, len = sprites.length; i < len; i++) {
+                                  sprites[i].x +=  sprites[i].dir.x;
+                                  sprites[i].y +=  sprites[i].dir.y;
+                                  if (sprites[i].x >= 800 || sprites[i].x <= 0) sprites[i].dir.x *= -1
+                                  if (sprites[i].y >= 640 || sprites[i].y <= 0) sprites[i].dir.y *= -1
+                              }
+
+                              var currentTime = new Date();
+                              var fps = 1000 / (currentTime - this._oldTime);
+                              this._oldTime = currentTime;
+                              this._label.setString(fps.toFixed(2) + " FPS");
+                          }
+                      });
+                      cc.director.runScene(new MyScene());
+                  }, this);
+              };
+              cc.game.run("gameCanvas");
+          };
+    </script>
+</body>
+</html>
